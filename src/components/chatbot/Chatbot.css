@@ -1,0 +1,11 @@
+.chatbot-messages a.d-flex {
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.chatbot-messages a.d-flex:hover {
+  background-color: #f1f3f5 !important;
+  border-color: #dc3545 !important;
+  transition: all 0.2s ease-in-out;
+}

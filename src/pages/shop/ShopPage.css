@@ -1,0 +1,21 @@
+/* Thiết lập khung chứa ảnh có kích thước cố định */
+.pi-pic {
+    width: 100%;
+    height: 350px; /* Bạn có thể điều chỉnh chiều cao này tùy ý */
+    overflow: hidden; /* Cắt bỏ phần ảnh thừa ra ngoài khung */
+    position: relative;
+}
+
+/* Áp dụng object-fit để ảnh tự động co giãn đẹp nhất */
+.pi-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Quan trọng: Giúp ảnh lấp đầy khung mà không bị méo */
+    object-position: center; /* Căn giữa ảnh trong khung */
+    transition: transform 0.3s ease; /* Hiệu ứng nhẹ khi di chuột qua */
+}
+
+/* Hiệu ứng zoom nhẹ khi di chuột vào ảnh */
+.pi-pic:hover img {
+    transform: scale(1.05);
+}
