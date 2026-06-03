@@ -1,16 +1,16 @@
-# 🛍️ Fashi Shop - React E-Commerce App
+#  Fashi Shop - React E-Commerce App
 
 Fashi Shop is a modern, responsive, and interactive e-commerce web application built using **React** and **Vite**. The application features an AI-powered styling and product recommendation assistant integrated directly with **Google Gemini**.
 
 ---
 
-## 🌟 Core Features
+##  Core Features
 
-- 🛍️ **Product Browsing & Details**: Explore store products, filter by categories, view detailed descriptions, sizes, colors, and pricing.
-- 🛒 **Shopping Cart & Checkout**: Seamlessly add items to the cart, manage quantities, and proceed to checkout.
-- 🔐 **User Authentication**: Secure Login and Registration flow (with session persistence using `localStorage`).
-- 📜 **Order History**: Keep track of previous purchases and order details.
-- 💬 **Fashi AI Virtual Assistant**:
+-  **Product Browsing & Details**: Explore store products, filter by categories, view detailed descriptions, sizes, colors, and pricing.
+-  **Shopping Cart & Checkout**: Seamlessly add items to the cart, manage quantities, and proceed to checkout.
+-  **User Authentication**: Secure Login and Registration flow (with session persistence using `localStorage`).
+-  **Order History**: Keep track of previous purchases and order details.
+-  **Fashi AI Virtual Assistant**:
   - Chatbot integrated with Google Gemini (`gemini-2.5-flash`).
   - Helps users find suitable outfits based on body metrics (height, weight, gender, size).
   - Recommends products using dynamic, interactive cards linking to details.
@@ -18,7 +18,7 @@ Fashi Shop is a modern, responsive, and interactive e-commerce web application b
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 * **Frontend**: React 19 + Vite
 * **Routing**: React Router DOM v7
@@ -28,7 +28,7 @@ Fashi Shop is a modern, responsive, and interactive e-commerce web application b
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 Follow these steps to run the project locally on your machine:
 
@@ -51,11 +51,11 @@ Create a file named `.env` in the root of the `my-react-app` folder:
 ```env
 VITE_GEMINI_API_KEY=your_google_gemini_api_key_here
 ```
-> 💡 **Tip:** You can copy the template file to get started:
+>  **Tip:** You can copy the template file to get started:
 > ```bash
 > cp .env.example .env
 > ```
-> ⚠️ **Important:** Do NOT commit your `.env` file to Git. It contains sensitive API keys and is ignored by default in `.gitignore`.
+>  **Important:** Do NOT commit your `.env` file to Git. It contains sensitive API keys and is ignored by default in `.gitignore`.
 
 ### 5. Start Development Server
 ```bash
@@ -65,7 +65,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser to view the 
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 my-react-app/
@@ -88,7 +88,7 @@ my-react-app/
 
 ---
 
-## 🤖 AI Chatbot Details
+##  AI Chatbot Details
 
 The chatbot utilizes the `@google/generative-ai` SDK to interact with the `gemini-2.5-flash` model.
 - **Context Injection**: The system prompt (`src/components/chatbot/geminiService.js`) dynamically feeds the product inventory (`src/data/products.js`) to the Gemini model.
