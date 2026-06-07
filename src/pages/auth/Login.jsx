@@ -1,21 +1,27 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useToast } from '../../context/ToastContext.jsx';
 
 export function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { loginUser } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (username && password) {
-      // Fake login process
-      login({ name: username, avatar: 'https://ui-avatars.com/api/?name=' + username + '&background=random' });
-      navigate('/');
+      const result = await loginUser(username, password);
+      if (result.success) {
+        showToast("Đăng nhập thành công!", "success");
+        navigate('/');
+      } else {
+        showToast(result.message, "danger");
+      }
     } else {
-      alert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
+      showToast("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!", "warning");
     }
   };
 

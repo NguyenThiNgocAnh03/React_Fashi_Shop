@@ -1,11 +1,26 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { products } from '../../data/products.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useCart } from '../../context/CartContext.jsx';
+import { useToast } from '../../context/ToastContext.jsx';
 import './ShopPage.css';
 
 export function ShopPage() {
     const { user } = useAuth();
+    const { addToCart } = useCart();
+    const { showToast } = useToast();
     const navigate = useNavigate();
+    const [productsList, setProductsList] = useState([]);
+
+    useEffect(() => {
+        const savedProds = localStorage.getItem('products');
+        if (savedProds) {
+            setProductsList(JSON.parse(savedProds));
+        } else {
+            setProductsList(products);
+        }
+    }, []);
     
     return (
         <section className="product-shop spad">
@@ -14,7 +29,7 @@ export function ShopPage() {
       <div className="col-lg-12 order-1 order-lg-2">
         <div className="product-list">
           <div className="row">
-            {products.map((product) => (
+            {productsList.map((product) => (
               <div className="col-lg-4 col-sm-6" key={product.id}>
                 <div className="product-item">
                   <div className="pi-pic">
@@ -28,8 +43,11 @@ export function ShopPage() {
                         <Link to={user ? "/cart" : "/login"} onClick={(e) => {
                             if(!user) {
                                 e.preventDefault();
-                                alert('Vui lòng đăng nhập để sử dụng giỏ hàng!');
+                                showToast('Vui lòng đăng nhập để sử dụng giỏ hàng!', 'warning');
                                 navigate('/login');
+                            } else {
+                                addToCart(product, 1);
+                                showToast('Đã thêm sản phẩm vào giỏ hàng!', 'success');
                             }
                         }}>
                           <i className="icon_bag_alt" />

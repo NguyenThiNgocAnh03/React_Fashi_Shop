@@ -1,9 +1,22 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { products } from '../../data/products.js';
 
-const SYSTEM_INSTRUCTION = `You are a friendly, enthusiastic, and professional smart fashion styling assistant for the Fashi clothing store.
+export function getSystemInstruction() {
+  let currentProducts = products;
+  try {
+    const localProds = localStorage.getItem('products');
+    if (localProds) {
+      currentProducts = JSON.parse(localProds);
+    } else {
+      localStorage.setItem('products', JSON.stringify(products));
+    }
+  } catch (e) {
+    console.error("Lỗi khi đọc sản phẩm từ localStorage:", e);
+  }
+
+  return `You are a friendly, enthusiastic, and professional smart fashion styling assistant for the Fashi clothing store.
 Here is the available store inventory with specific sizing, gender targets, and body metrics parameters in JSON format:
-${JSON.stringify(products, null, 2)}
+${JSON.stringify(currentProducts, null, 2)}
 
 CRITICAL RESPONSE AND MATCHING RULES:
 1. BODY METRIC FILTERING: When a user shares their gender, height (cm/m), or weight (kg), look closely at the "gender" and "specs" (height/weight ranges) of the products. Recommend ONLY the items that fit their physical profile.
@@ -20,11 +33,13 @@ CRITICAL RESPONSE AND MATCHING RULES:
      <div class="text-primary fw-bold text-truncate" style="font-size:14px; max-width:100%;" title="INSERT_PRODUCT_NAME_HERE">INSERT_PRODUCT_NAME_HERE</div>
      <div class="text-danger fw-bold mt-1" style="font-size:13px;">INSERT_FORMATTED_PRICE_HEREđ</div>
   </div>
-</a>
+ </a>
 (Notice: Ensure there is exactly ONE leading slash before the path, formatted precisely as src="/img/products/product-X.jpg").
 7. Price formatting: ALWAYS format with thousands separators followed by 'đ' (e.g., 850000 -> "850.000đ").
 8. Do NOT use Markdown formatting (like **, *, \`\`\`). Use <br/> for line breaks.
-9. Never wrap output HTML in markdown code blocks like \`\`\`html.`;
+9. Never wrap output HTML in markdown code blocks like \`\`\`html.
+10. STORE LOCATION/ADDRESS: The store address is 99 To Hien Thanh, Da Nang (99 Tô Hiến Thành, Đà Nẵng). If the user asks for the store address, where the shop is, or how to visit, tell them that Fashi Shop is located at 99 To Hien Thanh, Da Nang (99 Tô Hiến Thành, Đà Nẵng).`;
+}
 
 let chatSession = null;
 
@@ -44,7 +59,7 @@ export function initChatSession(apiKey, messages) {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
-    systemInstruction: SYSTEM_INSTRUCTION
+    systemInstruction: getSystemInstruction()
   });
 
   const safeMessages = Array.isArray(messages) ? messages : [];

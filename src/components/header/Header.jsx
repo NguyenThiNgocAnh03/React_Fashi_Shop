@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useCart } from '../../context/CartContext.jsx';
 
 export function Header() {
   const { user, logout } = useAuth();
+  const { cartItems, removeFromCart, totalCount, totalPrice } = useCart();
   return (<header className="header-section">
   <div className="header-top">
     <div className="container">
@@ -34,6 +36,12 @@ export function Header() {
             <option value="vi" data-title="Vietnamese">Tiếng Việt</option>
           </select>
         </div>
+        {user && user.role === 'admin' && (
+          <Link to="/admin" className="login-panel" style={{ float: 'none', padding: 0, display: 'flex', alignItems: 'center', gap: '6px', color: '#e53637', textDecoration: 'none', fontWeight: 'bold', marginRight: '10px' }}>
+            <i className="fa fa-cog" />
+            Trang Admin
+          </Link>
+        )}
         {user ? (
           <Link to="#" onClick={logout} className="login-panel" style={{ float: 'none', padding: 0, display: 'flex', alignItems: 'center', gap: '6px', color: '#252525', textDecoration: 'none', fontWeight: 'bold' }}>
             <img src={user.avatar || 'https://ui-avatars.com/api/?name=User'} alt="Avatar" style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }} />
@@ -80,55 +88,53 @@ export function Header() {
               </a>
             </li>
             <li className="cart-icon">
-              <a href="#">
+              <Link to="/cart">
                 <i className="icon_bag_alt" />
-                <span>3</span>
-              </a>
+                <span>{totalCount}</span>
+              </Link>
               <div className="cart-hover">
-                <div className="select-items">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td className="si-pic">
-                          <img src="img/select-product-1.jpg" alt="" />
-                        </td>
-                        <td className="si-text">
-                          <div className="product-selected">
-                            <p>₫60.00 x 1</p>
-                            <h6>Kabino Bedside Table</h6>
-                          </div>
-                        </td>
-                        <td className="si-close">
-                          <i className="ti-close" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="si-pic">
-                          <img src="img/select-product-2.jpg" alt="" />
-                        </td>
-                        <td className="si-text">
-                          <div className="product-selected">
-                            <p>₫60.00 x 1</p>
-                            <h6>Kabino Bedside Table</h6>
-                          </div>
-                        </td>
-                        <td className="si-close">
-                          <i className="ti-close" />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className="select-total">
-                  <span>total:</span>
-                  <h5>₫120.00</h5>
-                </div>
+                {cartItems.length > 0 ? (
+                  <>
+                    <div className="select-items" style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                      <table>
+                        <tbody>
+                          {cartItems.map((item) => (
+                            <tr key={item.id}>
+                              <td className="si-pic">
+                                <img 
+                                  src={item.image.startsWith('http') || item.image.startsWith('/') ? item.image : `/${item.image}`} 
+                                  alt={item.name} 
+                                  style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                />
+                              </td>
+                              <td className="si-text">
+                                <div className="product-selected">
+                                  <p>{item.price.toLocaleString('vi-VN')}đ x {item.quantity}</p>
+                                  <h6>{item.name}</h6>
+                                </div>
+                              </td>
+                              <td className="si-close" onClick={() => removeFromCart(item.id)} style={{ cursor: 'pointer' }}>
+                                <i className="ti-close" />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="select-total">
+                      <span>Tổng cộng:</span>
+                      <h5>{totalPrice.toLocaleString('vi-VN')}đ</h5>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-3 text-muted">Giỏ hàng trống</div>
+                )}
                 <div className="select-button">
                   <Link to="/cart" className="primary-btn view-card">
-                    VIEW CARD
+                    GIỎ HÀNG
                   </Link>
                   <Link to="/checkout" className="primary-btn checkout-btn">
-                    CHECK OUT
+                    THANH TOÁN
                   </Link>
                 </div>
               </div>

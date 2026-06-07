@@ -1,4 +1,4 @@
-export const products = [
+const initialProducts = [
   // --- THỜI TRANG NỮ (SWEATERS & DRESSES) ---
   { 
     id: 1, 
@@ -240,3 +240,19 @@ export const products = [
     tags: ["shoes", "converse", "sneakers", "high top", "yellow shoes", "canvas shoes", "unisex"]
   }
 ];
+
+let loadedProducts = initialProducts;
+if (typeof window !== 'undefined' && window.localStorage) {
+  const localProds = localStorage.getItem('products');
+  if (localProds) {
+    try {
+      loadedProducts = JSON.parse(localProds);
+    } catch (e) {
+      console.error("Lỗi khi parse sản phẩm từ localStorage:", e);
+    }
+  } else {
+    localStorage.setItem('products', JSON.stringify(initialProducts));
+  }
+}
+
+export const products = loadedProducts;

@@ -1,19 +1,39 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { products } from '../../data/products.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useCart } from '../../context/CartContext.jsx';
+import { useToast } from '../../context/ToastContext.jsx';
 
 export function ProductDetail() {
   const { id } = useParams();
   const { user } = useAuth();
+  const { addToCart } = useCart();
+  const { showToast } = useToast();
   const navigate = useNavigate();
-  
-  // Tìm sản phẩm trong data mới dựa vào ID trên URL
-  const product = products.find(p => p.id === parseInt(id));
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState('');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('products');
+    const list = saved ? JSON.parse(saved) : products;
+    const found = list.find(p => p.id === parseInt(id));
+    setProduct(found || null);
+    if (found) {
+      setSelectedSize((found.sizes && found.sizes[0]) || 'Free Size');
+    }
+    setLoading(false);
+  }, [id]);
+
+  if (loading) {
+    return <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>Đang tải sản phẩm...</div>;
+  }
 
   // Nếu không tìm thấy sản phẩm (ID bậy hoặc không tồn tại)
   if (!product) {
     return (
-      <div className="container" style={{ padding: '50px 0', textHighlight: 'center' }}>
+      <div className="container" style={{ padding: '50px 0', textAlign: 'center' }}>
         <h2>Sản phẩm không tồn tại</h2>
         <Link to="/">Quay lại trang chủ</Link>
       </div>
@@ -69,6 +89,51 @@ export function ProductDetail() {
                 </p>
               </div>
               
+              {/* Chọn kích cỡ */}
+              <div style={{ marginTop: '25px', marginBottom: '20px' }}>
+                <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#252525', display: 'block', marginBottom: '10px' }}>
+                  Chọn Kích Cỡ (Size):
+                </span>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  {product.sizes && product.sizes.length > 0 ? (
+                    product.sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        style={{
+                          padding: '10px 20px',
+                          border: selectedSize === size ? '2px solid #e53637' : '1px solid #ddd',
+                          backgroundColor: selectedSize === size ? '#e53637' : '#fff',
+                          color: selectedSize === size ? '#fff' : '#252525',
+                          borderRadius: '4px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          minWidth: '55px',
+                          textAlign: 'center'
+                        }}
+                      >
+                        {size}
+                      </button>
+                    ))
+                  ) : (
+                    <button
+                      disabled
+                      style={{
+                        padding: '10px 20px',
+                        border: '1px solid #ddd',
+                        backgroundColor: '#f5f5f5',
+                        color: '#888',
+                        borderRadius: '4px',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      Free Size
+                    </button>
+                  )}
+                </div>
+              </div>
+              
               {/* Nút Thêm vào giỏ hàng */}
               <div className="quantity" style={{ marginTop: '30px' }}>
                 <Link 
@@ -76,8 +141,11 @@ export function ProductDetail() {
                   onClick={(e) => {
                     if (!user) {
                       e.preventDefault();
-                      alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
+                      showToast('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!', 'warning');
                       navigate('/login');
+                    } else {
+                      addToCart(product, 1, selectedSize);
+                      showToast(`Đã thêm sản phẩm (Size: ${selectedSize}) vào giỏ hàng!`, 'success');
                     }
                   }} 
                   style={{ backgroundColor: '#e53637', color: 'white', padding: '15px 30px', textDecoration: 'none', display: 'inline-block', borderRadius: '5px', fontWeight: 'bold', fontSize: '16px', letterSpacing: '1px' }}
